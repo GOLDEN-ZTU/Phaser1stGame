@@ -26,7 +26,8 @@ var score = 0;
 var gameOver = false;
 var scoreText;
 var game = new Phaser.Game(config);
-
+//
+var badGuy;
 
 function preload ()
 {
@@ -37,6 +38,7 @@ function preload ()
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     //
     this.load.audio('jumpSound', 'assets/pryjok-mario.mp3');
+    this.load.spritesheet('dude_angry', 'assets/dude_angry.png', { frameWidth: 32, frameHeight: 48 });
 }
 
 function create ()
@@ -106,6 +108,33 @@ function create ()
     this.physics.add.collider(player, bombs, hitBomb, null, this);
     //
     jumpSound = this.sound.add('jumpSound');
+    //
+    badGuy = this.physics.add.sprite(200, 450, 'dude_angry');
+
+    badGuy.setBounce(0.2);
+    badGuy.setCollideWorldBounds(true);
+
+    this.anims.create({
+        key: 'badGuyLeft',
+        frames: this.anims.generateFrameNumbers('dude_angry', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    this.anims.create({
+        key: 'badGuyTurn',
+        frames: [{ key: 'dude_angry', frame: 4 }],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'badGuyRight',
+        frames: this.anims.generateFrameNumbers('dude_angry', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
+    //
+
 }
 
 function update ()
@@ -138,6 +167,25 @@ function update ()
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
         jumpSound.play();
+    }
+    if (cursors.left.isDown) {
+        player.setVelocityX(-160);
+        player.anims.play('left', true);
+    } else if (cursors.right.isDown) {
+        player.setVelocityX(160);
+        player.anims.play('right', true);
+    } else {
+        player.setVelocityX(0);
+        player.anims.play('turn');
+    }
+
+    // Bad Guy movement
+    if (badGuy.x < player.x) {
+        badGuy.setVelocityX(160);
+        badGuy.anims.play('badGuyRight', true);
+    } else {
+        badGuy.setVelocityX(-160);
+        badGuy.anims.play('badGuyLeft', true);
     }
 
 }

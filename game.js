@@ -35,7 +35,7 @@ function preload ()
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     //
-    this.load.audio('jumpSound', 'path/to/pryjok-mario.mp3');
+    this.load.audio('jumpSound', 'assets/pryjok-mario.mp3');
 }
 
 function create ()

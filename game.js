@@ -1,3 +1,4 @@
+var jumpSound;
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -24,8 +25,8 @@ var cursors;
 var score = 0;
 var gameOver = false;
 var scoreText;
-
 var game = new Phaser.Game(config);
+
 
 function preload ()
 {
@@ -122,29 +123,23 @@ function update ()
     }
     
 
-    if (cursors.left.isDown)
-    {
+    if (cursors.left.isDown) {
         player.setVelocityX(-160);
-
         player.anims.play('left', true);
-    }
-    else if (cursors.right.isDown)
-    {
+    } else if (cursors.right.isDown) {
         player.setVelocityX(160);
-
         player.anims.play('right', true);
-    }
-    else
-    {
+    } else {
         player.setVelocityX(0);
-
         player.anims.play('turn');
     }
 
-    if (cursors.up.isDown && player.body.touching.down)
-    {
+    // Player jump
+    if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
+        jumpSound.play();
     }
+
 }
 
 function collectStar (player, star)

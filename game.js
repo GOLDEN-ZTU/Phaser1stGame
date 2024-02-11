@@ -34,13 +34,15 @@ function preload ()
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    //////////////
+    this.load.audio('jumpSound', 'path/to/pryjok-mario.mp3');
 }
 
 function create ()
 {
     
     this.add.image(400, 300, 'sky');
-
+    
     
     platforms = this.physics.add.staticGroup();
 
@@ -101,6 +103,8 @@ function create ()
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
     this.physics.add.collider(player, bombs, hitBomb, null, this);
+    //////////
+    jumpSound = this.sound.add('jumpSound');
 }
 
 function update ()
@@ -108,6 +112,14 @@ function update ()
     if (gameOver)
     {
         return;
+    }
+
+    if (cursors.up.isDown && player.body.touching.down) {
+        player.setVelocityY(-330);
+
+        // ///////
+        jumpSound.play();
+    }
     }
 
     if (cursors.left.isDown)

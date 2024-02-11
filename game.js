@@ -51,7 +51,6 @@ function create ()
 
     
     platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
     platforms.create(600, 400, 'ground');
     platforms.create(50, 250, 'ground');
     platforms.create(750, 220, 'ground');
@@ -102,17 +101,21 @@ function create ()
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(stars, platforms);
     this.physics.add.collider(bombs, platforms);
-
+    //
+    //this.physics.add.collider(badGuy, platforms);
+    //
     this.physics.add.overlap(player, stars, collectStar, null, this);
 
     this.physics.add.collider(player, bombs, hitBomb, null, this);
     //
     jumpSound = this.sound.add('jumpSound');
     //
-    badGuy = this.physics.add.sprite(200, 450, 'dude_angry');
-
+    badGuy = this.physics.add.sprite(750, 450, 'dude_angry');
     badGuy.setBounce(0.2);
     badGuy.setCollideWorldBounds(true);
+    badGuy.setGravityY(0);
+    //
+    this.physics.add.collider(badGuy, platforms);
 
     this.anims.create({
         key: 'badGuyLeft',
@@ -134,6 +137,7 @@ function create ()
         repeat: -1
     });
     //
+
 
 }
 
@@ -162,7 +166,7 @@ function update ()
         player.setVelocityX(0);
         player.anims.play('turn');
     }
-
+    
     // Player jump
     if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
@@ -179,15 +183,34 @@ function update ()
         player.anims.play('turn');
     }
 
-    // Bad Guy movement
-    if (badGuy.x < player.x) {
-        badGuy.setVelocityX(160);
-        badGuy.anims.play('badGuyRight', true);
-    } else {
-        badGuy.setVelocityX(-160);
-        badGuy.anims.play('badGuyLeft', true);
+
+
+     // Bad Guy movement
+     if (Math.random() < 0.02) {
+        // Change direction randomly
+        badGuy.setVelocityX(Phaser.Math.Between(-200, 200));
     }
 
+    // Bad Guy and Player collision detection
+    this.physics.world.collide(player, badGuy, function () {
+        endGame();
+    });
+
+    // Update bad guy's animations based on velocity
+    if (badGuy.body.velocity.x > 0) {
+        badGuy.anims.play('badGuyRight', true);
+    } else if (badGuy.body.velocity.x < 0) {
+        badGuy.anims.play('badGuyLeft', true);
+    } else {
+        badGuy.anims.play('badGuyTurn');
+    }
+}
+
+function endGame() {
+    this.physics.pause();
+    player.setTint(0xff0000);
+    player.anims.play('turn');
+    gameOver = true;
 }
 
 function collectStar (player, star)
